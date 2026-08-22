@@ -1,7 +1,12 @@
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -10,14 +15,20 @@ body {
   color: #1e293b;
 }
 
+button,
+input,
+select {
+  font: inherit;
+}
+
 .app {
   min-height: 100vh;
 }
 
-/* Navbar */
+/* ================= NAVBAR ================= */
 
 .navbar {
-  height: 70px;
+  min-height: 70px;
   background: white;
   display: flex;
   align-items: center;
@@ -33,22 +44,30 @@ body {
 .navbar nav {
   display: flex;
   gap: 30px;
+  align-items: center;
 }
 
 .navbar a {
   text-decoration: none;
   color: #475569;
   font-size: 15px;
+  transition: 0.2s;
 }
 
 .navbar a:hover {
   color: #2563eb;
 }
 
-/* Dashboard */
+/* ================= DASHBOARD ================= */
 
 .dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 50px;
+}
+
+.welcome {
+  margin-bottom: 35px;
 }
 
 .welcome h1 {
@@ -60,25 +79,29 @@ body {
   color: #64748b;
 }
 
-/* Cards */
+/* ================= DASHBOARD CARDS ================= */
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
-  margin-top: 35px;
 }
 
 .card {
   background: white;
   padding: 25px;
+  min-height: 140px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .card h3 {
   color: #64748b;
   font-size: 15px;
+  font-weight: 600;
 }
 
 .number {
@@ -88,10 +111,10 @@ body {
   margin-top: 15px;
 }
 
-/* Quick Actions */
+/* ================= QUICK ACTIONS ================= */
 
 .quick-actions {
-  margin-top: 40px;
+  margin-top: 45px;
 }
 
 .quick-actions h2 {
@@ -100,6 +123,7 @@ body {
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 15px;
 }
 
@@ -111,27 +135,31 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+  transition: 0.2s;
 }
 
 .actions button:hover {
   background: #1d4ed8;
 }
-/* EMPLOYEES SECTION */
 
-.employees-section {
-  margin-top: 60px;
-  padding-bottom: 60px;
+/* ================= COMMON SECTION ================= */
+
+.employees-section,
+.attendance-section,
+.leave-section {
+  margin-top: 70px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
   margin-bottom: 25px;
 }
 
 .section-header h2 {
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .section-header p {
@@ -148,9 +176,15 @@ body {
   font-size: 15px;
 }
 
+.section-header button:hover {
+  background: #1d4ed8;
+}
+
+/* ================= EMPLOYEE FORM ================= */
+
 .employee-form {
   background: white;
-  padding: 25px;
+  padding: 30px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   margin-bottom: 25px;
@@ -168,16 +202,24 @@ body {
 
 .employee-form input,
 .employee-form select {
+  width: 100%;
   padding: 12px;
   border: 1px solid #cbd5e1;
   border-radius: 7px;
   font-size: 14px;
+  outline: none;
+}
+
+.employee-form input:focus,
+.employee-form select:focus {
+  border-color: #2563eb;
 }
 
 .form-buttons {
   grid-column: span 2;
   display: flex;
   gap: 10px;
+  margin-top: 5px;
 }
 
 .form-buttons button {
@@ -193,6 +235,8 @@ body {
   background: #64748b;
 }
 
+/* ================= EMPTY STATE ================= */
+
 .empty-state {
   background: white;
   border: 1px solid #e2e8f0;
@@ -201,91 +245,61 @@ body {
   text-align: center;
 }
 
+.empty-state h3 {
+  margin-bottom: 10px;
+}
+
 .empty-state p {
   color: #64748b;
 }
 
-.employee-table {
+/* ================= TABLES ================= */
+
+.employee-table,
+.leave-table {
+  width: 100%;
   background: white;
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
   border: 1px solid #e2e8f0;
 }
 
-.employee-table table {
+.employee-table table,
+.leave-table table {
   width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
 }
 
 .employee-table th,
-.employee-table td {
-  padding: 16px;
+.employee-table td,
+.leave-table th,
+.leave-table td {
+  padding: 16px 18px;
   text-align: left;
+  vertical-align: middle;
   border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
 }
 
-.employee-table th {
+.employee-table th,
+.leave-table th {
   background: #f8fafc;
   color: #334155;
-}
-/* ATTENDANCE */
-
-.attendance-section {
-  margin-top: 60px;
-  padding-bottom: 60px;
+  font-size: 14px;
 }
 
-.attendance-table {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
+.employee-table td,
+.leave-table td {
+  font-size: 14px;
 }
 
-.attendance-table table {
-  width: 100%;
-  border-collapse: collapse;
+.employee-table tr:last-child td,
+.leave-table tr:last-child td {
+  border-bottom: none;
 }
 
-.attendance-table th,
-.attendance-table td {
-  padding: 16px;
-  text-align: left;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.attendance-table th {
-  background: #f8fafc;
-  color: #334155;
-}
-
-.attendance-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.present-btn,
-.absent-btn {
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: white;
-}
-
-.present-btn {
-  background: #16a34a;
-}
-
-.absent-btn {
-  background: #dc2626;
-}
-/* QR ATTENDANCE */
-
-.attendance-section {
-  margin-top: 60px;
-  padding-bottom: 60px;
-}
+/* ================= QR ATTENDANCE ================= */
 
 .qr-attendance-card {
   background: white;
@@ -296,7 +310,7 @@ body {
 
 .qr-placeholder {
   text-align: center;
-  padding: 30px;
+  padding: 35px;
   border: 2px dashed #cbd5e1;
   border-radius: 10px;
   margin-bottom: 25px;
@@ -310,7 +324,7 @@ body {
 .qr-placeholder p {
   font-size: 20px;
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .qr-placeholder span {
@@ -324,16 +338,19 @@ body {
 }
 
 .status-item {
-  padding: 16px;
+  min-height: 100px;
+  padding: 18px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 8px;
 }
 
 .status-item span {
   color: #64748b;
+  font-size: 14px;
 }
 
 .status-item strong {
@@ -349,7 +366,7 @@ body {
 .checkin-btn,
 .checkout-btn {
   border: none;
-  padding: 12px 20px;
+  padding: 12px 22px;
   border-radius: 7px;
   cursor: pointer;
   font-size: 15px;
@@ -365,17 +382,143 @@ body {
   color: white;
 }
 
+.checkin-btn:hover {
+  background: #1d4ed8;
+}
+
+.checkout-btn:hover {
+  background: #334155;
+}
+
 .checkin-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-@media (max-width: 600px) {
+/* ================= LEAVE MANAGEMENT ================= */
+
+.leave-management-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.leave-management-card h3 {
+  margin-bottom: 22px;
+  font-size: 20px;
+}
+
+.pending-status {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.approve-btn,
+.reject-btn {
+  border: none;
+  padding: 9px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  color: white;
+  font-size: 13px;
+  margin-right: 8px;
+}
+
+.approve-btn {
+  background: #16a34a;
+}
+
+.reject-btn {
+  background: #dc2626;
+}
+
+.approve-btn:hover {
+  background: #15803d;
+}
+
+.reject-btn:hover {
+  background: #b91c1c;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .navbar {
+    padding: 15px 25px;
+    height: auto;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .navbar nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .dashboard {
+    padding: 35px 25px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .employee-form form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-buttons {
+    grid-column: span 1;
+  }
+
   .attendance-status {
     grid-template-columns: 1fr;
   }
 
-  .attendance-buttons {
+  .section-header {
+    align-items: flex-start;
     flex-direction: column;
   }
 }
+
+@media (max-width: 500px) {
+  .dashboard {
+    padding: 25px 15px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .actions,
+  .attendance-buttons {
+    flex-direction: column;
+  }
+
+  .actions button,
+  .checkin-btn,
+  .checkout-btn {
+    width: 100%;
+  }
+
+  .employee-form,
+  .qr-attendance-card,
+  .leave-management-card {
+    padding: 20px;
+  }
+}
+
