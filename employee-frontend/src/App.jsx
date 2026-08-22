@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import Leave from "./pages/Leave";
 import Attendance from "./pages/Attendance";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
+import Payroll from "./pages/Payroll";
 
 export default function App() {
   return (
@@ -12,11 +14,14 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
+
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <EmployeeDashboard />
+              <Layout>
+                <EmployeeDashboard />
+              </Layout>
             </ProtectedRoute>
           }
         />
@@ -24,28 +29,43 @@ export default function App() {
           path="/profile"
           element={
             <ProtectedRoute>
-               <Profile />
+              <Layout>
+                <Profile />
+              </Layout>
             </ProtectedRoute>
-         }
+          }
         />
         <Route
           path="/leave"
           element={
             <ProtectedRoute>
-              <Leave />
+              <Layout>
+                <Leave />
+              </Layout>
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/attendance"
           element={
             <ProtectedRoute>
-              <Attendance />
+              <Layout>
+                <Attendance />
+              </Layout>
             </ProtectedRoute>
           }
         />
- 
+        <Route
+          path="/payroll"
+          element={
+            <ProtectedRoute>
+               <Layout>
+                 <Payroll />
+               </Layout>
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );
