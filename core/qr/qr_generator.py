@@ -25,7 +25,7 @@ class QRGenerator:
             hashlib.sha256
         ).hexdigest()
 
-    def generate_token(self, location_id, validity_seconds=300):
+    def generate_token(self, location_id, validity_seconds=3600):
         now = int(time.time())
 
         payload = {
