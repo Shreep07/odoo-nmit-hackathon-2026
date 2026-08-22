@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { logout } from "../api/auth";
+import NotificationBell from "./NotificationBell";
 
 const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard" },
@@ -56,7 +57,14 @@ export default function Layout({ children }) {
         </aside>
 
         {/* Page content */}
-        <main className="flex-1">{children}</main>
+        
+        <main className="flex-1">
+          <div className="flex justify-end items-center px-6 py-4 border-b border-gray-100 bg-white">
+            <NotificationBell />
+          </div>
+          {children}
+        </main>
+
       </div>
     </div>
   );
