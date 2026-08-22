@@ -2,14 +2,20 @@ import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  // Load employees from localStorage when the app starts
+  // Load employees from localStorage
   const [employees, setEmployees] = useState(() => {
     const savedEmployees = localStorage.getItem('employees')
-
     return savedEmployees ? JSON.parse(savedEmployees) : []
   })
 
   const [showForm, setShowForm] = useState(false)
+
+  // QR attendance states
+  const [qrStatus, setQrStatus] = useState('Waiting for scan')
+  const [locationStatus, setLocationStatus] = useState('Not verified')
+  const [blockchainStatus, setBlockchainStatus] = useState('Not recorded')
+  const [attendanceStatus, setAttendanceStatus] = useState('Not checked in')
+  const [isCheckedIn, setIsCheckedIn] = useState(false)
 
   const [employee, setEmployee] = useState({
     name: '',
@@ -18,7 +24,7 @@ function App() {
     role: '',
   })
 
-  // Save employees to localStorage whenever employees change
+  // Save employees to localStorage
   useEffect(() => {
     localStorage.setItem('employees', JSON.stringify(employees))
   }, [employees])
@@ -33,7 +39,12 @@ function App() {
   const addEmployee = (e) => {
     e.preventDefault()
 
-    if (!employee.name || !employee.email || !employee.department || !employee.role) {
+    if (
+      !employee.name ||
+      !employee.email ||
+      !employee.department ||
+      !employee.role
+    ) {
       alert('Please fill all fields')
       return
     }
@@ -48,6 +59,38 @@ function App() {
     })
 
     setShowForm(false)
+  }
+
+  // Scroll to attendance section
+  const goToAttendance = () => {
+    document.getElementById('attendance').scrollIntoView({
+      behavior: 'smooth',
+    })
+  }
+
+  // Temporary frontend flow for QR check-in
+  const startCheckIn = () => {
+    setQrStatus('QR verified')
+    setLocationStatus('Location verified')
+    setBlockchainStatus('Attendance verification pending')
+    setAttendanceStatus('Processing check-in...')
+
+    setTimeout(() => {
+      setBlockchainStatus('Blockchain record confirmed')
+      setAttendanceStatus('Checked in successfully')
+      setIsCheckedIn(true)
+    }, 1000)
+  }
+
+  // Temporary frontend flow for check-out
+  const checkOut = () => {
+    if (!isCheckedIn) {
+      alert('Please check in first')
+      return
+    }
+
+    setAttendanceStatus('Checked out successfully')
+    setIsCheckedIn(false)
   }
 
   return (
@@ -83,7 +126,9 @@ function App() {
 
           <div className="card">
             <h3>Present Today</h3>
-            <p className="number">0</p>
+            <p className="number">
+              {isCheckedIn ? 1 : 0}
+            </p>
           </div>
 
           <div className="card">
@@ -109,7 +154,7 @@ function App() {
               Add Employee
             </button>
 
-            <button>
+            <button onClick={goToAttendance}>
               Mark Attendance
             </button>
 
@@ -197,18 +242,14 @@ function App() {
 
           {/* EMPLOYEE LIST */}
           {employees.length === 0 ? (
-
             <div className="empty-state">
               <h3>No employees yet</h3>
               <p>Click "Add Employee" to add your first employee.</p>
             </div>
-
           ) : (
-
             <div className="employee-table">
 
               <table>
-
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -219,7 +260,6 @@ function App() {
                 </thead>
 
                 <tbody>
-
                   {employees.map((emp, index) => (
                     <tr key={index}>
                       <td>{emp.name}</td>
@@ -228,14 +268,78 @@ function App() {
                       <td>{emp.role}</td>
                     </tr>
                   ))}
-
                 </tbody>
-
               </table>
 
             </div>
-
           )}
+
+        </section>
+
+        {/* QR ATTENDANCE */}
+        <section id="attendance" className="attendance-section">
+
+          <div className="section-header">
+            <div>
+              <h2>QR Attendance</h2>
+              <p>
+                Verify your QR code and location to record attendance.
+              </p>
+            </div>
+          </div>
+
+          <div className="qr-attendance-card">
+
+            <div className="qr-placeholder">
+              <div className="qr-icon">▣</div>
+              <p>QR Scanner</p>
+              <span>Scan the company attendance QR code</span>
+            </div>
+
+            <div className="attendance-status">
+
+              <div className="status-item">
+                <span>QR Status</span>
+                <strong>{qrStatus}</strong>
+              </div>
+
+              <div className="status-item">
+                <span>Location Status</span>
+                <strong>{locationStatus}</strong>
+              </div>
+
+              <div className="status-item">
+                <span>Blockchain Status</span>
+                <strong>{blockchainStatus}</strong>
+              </div>
+
+              <div className="status-item">
+                <span>Attendance Status</span>
+                <strong>{attendanceStatus}</strong>
+              </div>
+
+            </div>
+
+            <div className="attendance-buttons">
+
+              <button
+                className="checkin-btn"
+                onClick={startCheckIn}
+                disabled={isCheckedIn}
+              >
+                {isCheckedIn ? 'Checked In' : 'Start QR Check-In'}
+              </button>
+
+              <button
+                className="checkout-btn"
+                onClick={checkOut}
+              >
+                Check Out
+              </button>
+
+            </div>
+
+          </div>
 
         </section>
 
