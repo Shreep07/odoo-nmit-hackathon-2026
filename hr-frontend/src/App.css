@@ -228,3 +228,154 @@ body {
   background: #f8fafc;
   color: #334155;
 }
+/* ATTENDANCE */
+
+.attendance-section {
+  margin-top: 60px;
+  padding-bottom: 60px;
+}
+
+.attendance-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.attendance-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.attendance-table th,
+.attendance-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.attendance-table th {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.attendance-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.present-btn,
+.absent-btn {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+}
+
+.present-btn {
+  background: #16a34a;
+}
+
+.absent-btn {
+  background: #dc2626;
+}
+/* QR ATTENDANCE */
+
+.attendance-section {
+  margin-top: 60px;
+  padding-bottom: 60px;
+}
+
+.qr-attendance-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.qr-placeholder {
+  text-align: center;
+  padding: 30px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+.qr-icon {
+  font-size: 60px;
+  margin-bottom: 10px;
+}
+
+.qr-placeholder p {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.qr-placeholder span {
+  color: #64748b;
+}
+
+.attendance-status {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.status-item {
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-item span {
+  color: #64748b;
+}
+
+.status-item strong {
+  color: #1e293b;
+}
+
+.attendance-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.checkin-btn,
+.checkout-btn {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.checkin-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.checkout-btn {
+  background: #475569;
+  color: white;
+}
+
+.checkin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .attendance-status {
+    grid-template-columns: 1fr;
+  }
+
+  .attendance-buttons {
+    flex-direction: column;
+  }
+}
