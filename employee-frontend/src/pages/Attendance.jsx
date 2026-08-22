@@ -7,16 +7,31 @@ export default function Attendance() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  function getLocation() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation is not supported by this browser"));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
+        (err) => reject(new Error("Could not get location: " + err.message)),
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+  }
+
   async function handleCheckIn(e) {
     e.preventDefault();
     setError("");
     setResult(null);
     setLoading(true);
     try {
-      const res = await client.post("/employee/attendance/checkin", { token });
+      const { lat, lng } = await getLocation();
+      const res = await client.post("/employee/attendance/checkin", { token, lat, lng });
       setResult(res.data);
     } catch (err) {
-      setError(err.response?.data?.error || "Check-in failed");
+      setError(err.response?.data?.error || err.message || "Check-in failed");
     } finally {
       setLoading(false);
     }
@@ -32,8 +47,6 @@ export default function Attendance() {
           onSubmit={handleCheckIn}
           className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mt-6 space-y-4"
         >
-          {/* Placeholder input until the camera scanner is wired in.
-              For now this accepts a pasted QR token string. */}
           <div>
             <label className="block text-xs text-gray-500 mb-1">QR Token</label>
             <textarea
@@ -44,6 +57,10 @@ export default function Attendance() {
               placeholder="Paste scanned QR token here"
             />
           </div>
+
+          <p className="text-xs text-gray-400">
+            📍 Your browser will ask for location permission when you check in.
+          </p>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
@@ -62,17 +79,22 @@ export default function Attendance() {
             <div className="mt-4 space-y-2 text-sm">
               <Row label="Check-in time" value={result.check_in} />
               <Row label="Late count this month" value={result.late_count} />
-              {result.warning && (
-                <p className="text-yellow-700 bg-yellow-50 rounded-lg px-3 py-2 text-xs mt-2">
-                  ⚠️ You've reached the maximum allowed late arrivals for this month.
-                </p>
-              )}
-              {result.hr_escalation && (
-                <p className="text-red-700 bg-red-50 rounded-lg px-3 py-2 text-xs mt-2">
-                  🔴 This has been flagged to HR for review.
-                </p>
-              )}
+              <Row label="Distance from office" value={`${result.distance_meters} m`} />
+              <Row label="Blockchain block #" value={result.block_index} />
             </div>
+            {result.warning && (
+              <p className="text-yellow-700 bg-yellow-50 rounded-lg px-3 py-2 text-xs mt-3">
+                ⚠️ You've reached the maximum allowed late arrivals for this month.
+              </p>
+            )}
+            {result.hr_escalation && (
+              <p className="text-red-700 bg-red-50 rounded-lg px-3 py-2 text-xs mt-2">
+                🔴 This has been flagged to HR for review.
+              </p>
+            )}
+            <p className="text-gray-400 text-xs mt-3 break-all">
+              🔒 Verified hash: {result.block_hash}
+            </p>
           </div>
         )}
       </div>

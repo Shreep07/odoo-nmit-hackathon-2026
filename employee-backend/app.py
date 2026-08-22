@@ -27,11 +27,18 @@ sys.path.append(os.path.join(CORE_PATH, "attendance"))  # attendance/ files use 
 
 from qr.qr_service import QRService
 from attendance_service import AttendanceService
+from location.location_service import LocationService
+from blockchain.blockchain_service import BlockchainService
 from datetime import time as dtime
 
 attendance_service = AttendanceService()
-qr_service = QRService() 
-COMPANY_START_TIME = dtime(9, 0)  # 9:00 AM — adjust if your team picks a different time
+qr_service = QRService()
+location_service = LocationService(allowed_radius_meters=500)
+blockchain_service = BlockchainService()
+
+COMPANY_START_TIME = dtime(9, 0)   # 9:00 AM — adjust if your team picks a different time
+COMPANY_LATITUDE = 12.933683798814647         # PLACEHOLDER — replace with your actual venue's coordinates
+COMPANY_LONGITUDE = 77.6960876150615      # (get real ones from Google Maps: right-click the pin → coordinates)
 
 
 app = Flask(__name__)
@@ -209,16 +216,47 @@ def payroll():
 def attendance_checkin():
     data = request.json
     token = data.get("token")
+    lat = data.get("lat")
+    lng = data.get("lng")
+
     if not token:
         return jsonify({"error": "Missing QR token"}), 400
+    if lat is None or lng is None:
+        return jsonify({"error": "Missing location data"}), 400
 
     try:
+        # 1. Validate QR
         scan_info = qr_service.scan_for_attendance(token, request.employee_id)
+
+        # 2. Validate location
+        location_result = location_service.verify_employee_location(
+            employee_latitude=lat,
+            employee_longitude=lng,
+            company_latitude=COMPANY_LATITUDE,
+            company_longitude=COMPANY_LONGITUDE,
+        )
+        if not location_result["within_radius"]:
+            return jsonify({
+                "error": "Outside allowed check-in radius",
+                "distance_meters": location_result["distance_meters"],
+                "allowed_radius_meters": location_result["allowed_radius_meters"],
+            }), 403
+
+        # 3. Record attendance
         record = attendance_service.process_check_in(
             employee_id=str(request.employee_id),
             check_in=datetime.datetime.now(),
             company_start_time=COMPANY_START_TIME,
         )
+
+        # 4. Write to blockchain ledger
+        block = blockchain_service.add_attendance_record({
+            "employee_id": str(request.employee_id),
+            "status": record.status,
+            "check_in": record.check_in.isoformat(),
+            "distance_meters": location_result["distance_meters"],
+        })
+
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
@@ -228,8 +266,10 @@ def attendance_checkin():
         "late_count": record.late_count,
         "warning": record.warning,
         "hr_escalation": record.hr_escalation,
+        "distance_meters": location_result["distance_meters"],
+        "block_hash": block.hash,
+        "block_index": block.index,
     })
-
 
 @app.route("/api/dev/generate-test-qr", methods=["GET"])
 def generate_test_qr():
