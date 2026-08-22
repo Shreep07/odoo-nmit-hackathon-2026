@@ -1,8 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  const [employees, setEmployees] = useState([])
+  // Load employees from localStorage when the app starts
+  const [employees, setEmployees] = useState(() => {
+    const savedEmployees = localStorage.getItem('employees')
+
+    return savedEmployees ? JSON.parse(savedEmployees) : []
+  })
+
   const [showForm, setShowForm] = useState(false)
 
   const [employee, setEmployee] = useState({
@@ -11,6 +17,11 @@ function App() {
     department: '',
     role: '',
   })
+
+  // Save employees to localStorage whenever employees change
+  useEffect(() => {
+    localStorage.setItem('employees', JSON.stringify(employees))
+  }, [employees])
 
   const handleChange = (e) => {
     setEmployee({
@@ -54,7 +65,6 @@ function App() {
         </nav>
       </header>
 
-
       {/* DASHBOARD */}
       <main id="dashboard" className="dashboard">
 
@@ -62,7 +72,6 @@ function App() {
           <h1>HR Dashboard</h1>
           <p>Manage employees, attendance and leave in one place.</p>
         </div>
-
 
         {/* DASHBOARD CARDS */}
         <div className="cards">
@@ -91,7 +100,6 @@ function App() {
 
         </div>
 
-
         {/* QUICK ACTIONS */}
         <section className="quick-actions">
           <h2>Quick Actions</h2>
@@ -111,7 +119,6 @@ function App() {
           </div>
         </section>
 
-
         {/* EMPLOYEES */}
         <section id="employees" className="employees-section">
 
@@ -125,7 +132,6 @@ function App() {
               + Add Employee
             </button>
           </div>
-
 
           {/* ADD EMPLOYEE FORM */}
           {showForm && (
@@ -188,7 +194,6 @@ function App() {
 
             </div>
           )}
-
 
           {/* EMPLOYEE LIST */}
           {employees.length === 0 ? (
