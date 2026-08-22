@@ -6,6 +6,8 @@ const API_URL = 'http://127.0.0.1:5001'
 function App() {
   const [employees, setEmployees] = useState([])
   const [leaveRequests, setLeaveRequests] = useState([])
+  const [attendanceHistory, setAttendanceHistory] = useState([])
+
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
   const [attendanceLoading, setAttendanceLoading] = useState(false)
@@ -20,7 +22,9 @@ function App() {
   const [qrStatus, setQrStatus] = useState('Waiting for scan')
   const [locationStatus, setLocationStatus] = useState('Not verified')
   const [blockchainStatus, setBlockchainStatus] = useState('Not recorded')
-  const [attendanceStatus, setAttendanceStatus] = useState('Not checked in')
+  const [attendanceStatus, setAttendanceStatus] =
+    useState('Not checked in')
+
   const [isCheckedIn, setIsCheckedIn] = useState(false)
 
   useEffect(() => {
@@ -95,26 +99,39 @@ function App() {
 
       const data = await response.json()
 
-      if (Array.isArray(data) && data.length > 0) {
+      const attendanceData = Array.isArray(data)
+        ? data
+        : []
+
+      setAttendanceHistory(attendanceData)
+
+      if (attendanceData.length > 0) {
         const latestAttendance =
-          data[data.length - 1]
+          attendanceData[
+            attendanceData.length - 1
+          ]
 
         setQrStatus(
           latestAttendance.qrStatus === 'Verified'
             ? 'QR verified'
-            : latestAttendance.qrStatus
+            : latestAttendance.qrStatus ||
+              'Waiting for scan'
         )
 
         setLocationStatus(
-          latestAttendance.locationStatus === 'Verified'
+          latestAttendance.locationStatus ===
+            'Verified'
             ? 'Location verified'
-            : latestAttendance.locationStatus
+            : latestAttendance.locationStatus ||
+              'Not verified'
         )
 
         setBlockchainStatus(
-          latestAttendance.blockchainStatus === 'Recorded'
+          latestAttendance.blockchainStatus ===
+            'Recorded'
             ? 'Blockchain record confirmed'
-            : latestAttendance.blockchainStatus
+            : latestAttendance.blockchainStatus ||
+              'Not recorded'
         )
 
         if (
@@ -231,7 +248,10 @@ function App() {
   }
 
   const startCheckIn = async () => {
-    if (isCheckedIn || attendanceLoading) {
+    if (
+      isCheckedIn ||
+      attendanceLoading
+    ) {
       return
     }
 
@@ -270,7 +290,7 @@ function App() {
       const data = await response.json()
 
       const attendance =
-        data.attendance
+        data.attendance || data
 
       setQrStatus(
         attendance.qrStatus === 'Verified'
@@ -279,13 +299,15 @@ function App() {
       )
 
       setLocationStatus(
-        attendance.locationStatus === 'Verified'
+        attendance.locationStatus ===
+          'Verified'
           ? 'Location verified'
           : attendance.locationStatus
       )
 
       setBlockchainStatus(
-        attendance.blockchainStatus === 'Recorded'
+        attendance.blockchainStatus ===
+          'Recorded'
           ? 'Blockchain record confirmed'
           : attendance.blockchainStatus
       )
@@ -295,6 +317,8 @@ function App() {
       )
 
       setIsCheckedIn(true)
+
+      await fetchAttendance()
 
       alert('Check-in successful')
     } catch (error) {
@@ -351,7 +375,7 @@ function App() {
       const data = await response.json()
 
       const attendance =
-        data.attendance
+        data.attendance || data
 
       setQrStatus(
         attendance.qrStatus === 'Verified'
@@ -360,13 +384,15 @@ function App() {
       )
 
       setLocationStatus(
-        attendance.locationStatus === 'Verified'
+        attendance.locationStatus ===
+          'Verified'
           ? 'Location verified'
           : attendance.locationStatus
       )
 
       setBlockchainStatus(
-        attendance.blockchainStatus === 'Recorded'
+        attendance.blockchainStatus ===
+          'Recorded'
           ? 'Blockchain record confirmed'
           : attendance.blockchainStatus
       )
@@ -376,6 +402,8 @@ function App() {
       )
 
       setIsCheckedIn(false)
+
+      await fetchAttendance()
 
       alert('Check-out successful')
     } catch (error) {
@@ -887,6 +915,88 @@ function App() {
               </button>
             </div>
           </div>
+
+          <div className="attendance-history">
+            <div className="section-header">
+              <div>
+                <h2>
+                  Attendance History
+                </h2>
+
+                <p>
+                  View all attendance records.
+                </p>
+              </div>
+            </div>
+
+            {attendanceHistory.length === 0 ? (
+              <div className="empty-state">
+                <h3>
+                  No attendance records
+                </h3>
+
+                <p>
+                  Check in to create your first
+                  attendance record.
+                </p>
+              </div>
+            ) : (
+              <div className="employee-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Employee</th>
+                      <th>QR</th>
+                      <th>Location</th>
+                      <th>Blockchain</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {attendanceHistory.map(
+                      (record) => (
+                        <tr
+                          key={record.id}
+                        >
+                          <td>
+                            {record.id}
+                          </td>
+
+                          <td>
+                            {record.employee}
+                          </td>
+
+                          <td>
+                            {record.qrStatus}
+                          </td>
+
+                          <td>
+                            {
+                              record.locationStatus
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              record.blockchainStatus
+                            }
+                          </td>
+
+                          <td>
+                            <strong>
+                              {record.status}
+                            </strong>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </section>
 
         <section
@@ -958,11 +1068,15 @@ function App() {
                             </td>
 
                             <td>
-                              {request.department}
+                              {
+                                request.department
+                              }
                             </td>
 
                             <td>
-                              {request.leaveType}
+                              {
+                                request.leaveType
+                              }
                             </td>
 
                             <td>
@@ -1050,7 +1164,9 @@ function App() {
                           </td>
 
                           <td>
-                            {request.leaveType}
+                            {
+                              request.leaveType
+                            }
                           </td>
 
                           <td>
