@@ -1,6 +1,6 @@
 from datetime import date
 
-from late_tracker import LateTracker
+from core.attendance.late_tracker import LateTracker
 
 
 def test_monthly_late_count():

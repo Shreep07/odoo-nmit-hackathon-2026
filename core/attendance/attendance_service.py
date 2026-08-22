@@ -1,8 +1,8 @@
 from datetime import datetime, time
 
-from attendance_record import AttendanceRecord
-from attendance_rules import calculate_attendance
-from late_tracker import LateTracker
+from core.attendance.attendance_record import AttendanceRecord
+from core.attendance.attendance_rules import calculate_attendance
+from core.attendance.late_tracker import LateTracker
 
 
 class AttendanceService:
