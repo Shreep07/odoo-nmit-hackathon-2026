@@ -1,6 +1,6 @@
 from datetime import datetime, time
 
-from attendance_service import AttendanceService
+from core.attendance.attendance_service import AttendanceService
 
 
 def test_on_time_attendance():
