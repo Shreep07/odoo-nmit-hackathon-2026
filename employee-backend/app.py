@@ -22,11 +22,12 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 
 CORE_PATH = os.path.join(os.path.dirname(__file__), "..", "core")
-sys.path.append(CORE_PATH)                              # lets us import qr as a proper package
-sys.path.append(os.path.join(CORE_PATH, "attendance"))  # attendance/ files use flat imports internally
+REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
+sys.path.append(CORE_PATH)       # for qr.qr_service
+sys.path.append(REPO_ROOT)       # for core.attendance.* imports
 
 from qr.qr_service import QRService
-from attendance_service import AttendanceService
+from core.attendance.attendance_service import AttendanceService
 from location.location_service import LocationService
 from blockchain.blockchain_service import BlockchainService
 from datetime import time as dtime
@@ -270,12 +271,6 @@ def attendance_checkin():
         "block_hash": block.hash,
         "block_index": block.index,
     })
-
-@app.route("/api/dev/generate-test-qr", methods=["GET"])
-def generate_test_qr():
-    """TEMPORARY — for testing before HR's QR generation UI is ready. Remove before demo."""
-    result = qr_service.create_qr(location_id="office-main", validity_seconds=300)
-    return jsonify(result)
 
 
 # ---------------- Seed data (run once) ----------------
